@@ -92,18 +92,25 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager.unregisterListener(this)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        TODO("Not yet implemented")
+
+        val sensorManager = getSystemServiceManager(Context.SENSOR_SERVICE) as SensorManager
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val magField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, magField, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
-
-
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        TODO("Not yet implemented")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        val holder = surfaceView.holder
+        holder.addCallback(this)
     }
 }
