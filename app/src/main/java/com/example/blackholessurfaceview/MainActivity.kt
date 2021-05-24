@@ -1,5 +1,6 @@
 package com.example.blackholessurfaceview
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.hardware.Sensor
@@ -9,8 +10,10 @@ import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.SurfaceHolder
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Callback {
+
 
     private val tag = "Black holes"
     private val matrixSize = 16
@@ -88,8 +91,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
         canvas.drawCircle(ballX,ballY,radius,paint)
 
         if(isGoal) {
-            surfaceView.holder.unlockCanvasAndPost(canvas)
+            paint.textSize = 80f
+            canvas.drawText(goaled(),10f,(surfaceHeight - 60).toFloat(),paint)
         }
+        surfaceView.holder.unlockCanvasAndPost(canvas)
+    }
+
+    private fun goaled(): String {
+    val elapsedTime = System.currentTimeMillis()- startTime
+        val secTime = (elapsedTime / 1000).toInt()
+        return "Goal! ${secTime}"
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -100,7 +111,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
 
     override fun surfaceCreated(holder: SurfaceHolder) {
 
-        val sensorManager = getSystemServiceManager(Context.SENSOR_SERVICE) as SensorManager
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         val magField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
@@ -112,5 +123,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
         setContentView(R.layout.activity_main)
         val holder = surfaceView.holder
         holder.addCallback(this)
+
     }
 }
