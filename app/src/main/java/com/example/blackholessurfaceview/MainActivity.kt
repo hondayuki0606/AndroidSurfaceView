@@ -1,5 +1,7 @@
 package com.example.blackholessurfaceview
 
+import android.graphics.Color
+import android.graphics.Paint
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -17,6 +19,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
     private var acValues = FloatArray(3)
     private var startTime:Long = 0
     private var surfaceWidth = 0
+    private var surfaceHeight = 0
+    private var ballX = 0f
+    private var ballY = 0f
+    private var isGoal = false
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
@@ -38,6 +44,52 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
         SensorManager.remapCoordinateSystem(inR, SensorManager.AXIS_X, SensorManager.AXIS_Y, outR)
 
         SensorManager.getOrientation(outR,orValues)
+
+        val pitch = rad2Deg(orValues[1])
+        val roll = rad2Deg(orValues[2])
+
+        if(!isGoal){
+            drawGameBoad(pitch,roll)
+        }
+    }
+
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+        surfaceWidth = width
+        surfaceHeight = height
+        ballX = (width / 2).toFloat()
+        ballY = (height / radius).toFloat()
+        startTime = System.currentTimeMillis()
+    }
+
+    private fun rad2Deg(rad: Float): Int {
+        return Math.floor(Math.toDegrees(rad.toDouble())).toInt()
+    }
+
+    private fun drawGameBoad(pitch: Int, roll: Int) {
+
+        ballX += roll
+        ballY -= pitch
+
+        if(ballX < 0){
+            ballX = surfaceWidth -radius
+        } else if (ballX > surfaceWidth){
+            ballX =radius
+        }
+        if(ballY + radius < 0){
+            isGoal = true
+        } else if (ballX > surfaceWidth){
+            ballY = surfaceHeight -radius
+        }
+
+        val canvas = surfaceView.holder.lockCanvas()
+        val paint = Paint()
+        paint.color = Color.YELLOW
+        canvas.drawColor(Color.BLUE)
+        canvas.drawCircle(ballX,ballY,radius,paint)
+
+        if(isGoal) {
+            surfaceView.holder.unlockCanvasAndPost(canvas)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +101,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
         TODO("Not yet implemented")
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        TODO("Not yet implemented")
-    }
+
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         TODO("Not yet implemented")
