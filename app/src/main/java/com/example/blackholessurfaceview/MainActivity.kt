@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
             blackholeList.add(bh)
         }
     }
+
     private fun drawGameBoad(pitch: Int, roll: Int) {
 
         ballX += roll
@@ -115,6 +116,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
         paint.color = Color.YELLOW
         if(!isGone) {
             canvas.drawCircle(ballX, ballY, radius, paint)
+        }else{
+            paint.textSize = 80f
+            canvas.drawText(field(),10f,(surfaceHeight - 60).toFloat(),paint)
         }
 
         if(isGoal) {
@@ -126,6 +130,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, SurfaceHolder.Cal
 
     private fun checkGone(x0: Float,y0: Float,r:Float): Boolean {
         return(x0 - ballX) * (x0-ballX) + (y0-ballY) * (y0-ballY) < r*r
+    }
+
+    private fun field(): String {
+        return "Field"
     }
 
     private fun goaled(): String {

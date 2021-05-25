@@ -1,7 +1,7 @@
 package com.example.blackholessurfaceview
 
 class Blackhole(val x: Float,val y:Float,val speed:Int) {
-    val MAX = 400f
+    val MAX = 110f
     val MIN = 30f
     var r = 30f
     var sign = 1
